@@ -4,27 +4,21 @@ Welcome to the KitKat Universe! This project is a viewer and admin panel for Kit
 
 ## Deployment
 
-This project is configured for deployment on **Render**. If configuring manually, use:
-
-- **Build Command:** `mix deps.get --only prod && mix compile && mix assets.deploy`
-- **Start Command:** `mix phx.server`
-- **Root Directory:** You must set `rootDir` in `render.yaml` to the folder containing `mix.exs`.
-
-> **Troubleshooting:** If the build fails with `phx.digest not found`, ensure the **Build Command** in Render settings matches the one above. The default command (`mix phx.digest`) will fail because dependencies are not yet installed.
+This project is configured for deployment on **Render**.
 
 ### Prerequisites
 
-- Elixir
+- Node.js
 - Firebase Service Account
 
 ### Setup
 
 1. Install dependencies:
    ```bash
-   mix deps.get
+   npm install
    ```
 
 2. Start the server:
    ```bash
-   mix phx.server
+   npm start
    ```

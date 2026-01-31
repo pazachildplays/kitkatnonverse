@@ -1,11 +1,9 @@
 services:
   - type: web
     name: kitkat-universe
-    env: elixir
-    rootDir: kitkat_universe # <-- REPLACE THIS with the actual folder name containing mix.exs
-    buildCommand: mix deps.get --only prod && mix compile && mix assets.deploy
-    startCommand: mix phx.server
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
-      - key: SECRET_KEY_BASE
-        generateValue: true
-      - key: PHX_HOST
+      - key: NODE_ENV
+        value: production
