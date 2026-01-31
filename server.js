@@ -121,13 +121,6 @@ function cleanNestedGit() {
             console.error("⚠️ Failed to remove .gitmodules:", e.message);
         }
     }
-    // Force remove from git index to prevent "does not have a commit checked out" error
-    try {
-        // We use execSync to ensure this finishes before we try to add files
-        execSync('git rm --cached kitkatnonverse -f -r', { stdio: 'ignore', cwd: __dirname });
-    } catch (e) {
-        // Ignore errors if it wasn't in the index
-    }
 }
 
 // Save data helper
