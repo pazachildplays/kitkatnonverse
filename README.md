@@ -8,7 +8,7 @@ This project is configured for deployment on **Render**. If configuring manually
 
 - **Build Command:** `mix deps.get --only prod && mix compile && mix assets.deploy`
 - **Start Command:** `mix phx.server`
-- **Root Directory:** If your `mix.exs` is in a subfolder, specify the folder name here.
+- **Root Directory:** You must set `rootDir` in `render.yaml` to the folder containing `mix.exs`.
 
 > **Troubleshooting:** If the build fails with `phx.digest not found`, ensure the **Build Command** in Render settings matches the one above. The default command (`mix phx.digest`) will fail because dependencies are not yet installed.
 
