@@ -8,17 +8,17 @@ This project is configured for deployment on **Render**.
 
 ### Prerequisites
 
-- Node.js
+- Elixir
 - Firebase Service Account
 
 ### Setup
 
 1. Install dependencies:
    ```bash
-   npm install
+   mix deps.get
    ```
 
 2. Start the server:
    ```bash
-   npm start
+   mix phx.server
    ```

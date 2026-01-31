@@ -1,11 +1,11 @@
 services:
   - type: web
     name: kitkat-universe
-    env: node
-    buildCommand: npm install
-    startCommand: npm start
+    env: elixir
+    buildCommand: mix deps.get --only prod && mix compile && mix assets.deploy
+    startCommand: mix phx.server
     envVars:
-      - key: ADMIN_PASSWORD
-        sync: false
-      - key: FIREBASE_SERVICE_ACCOUNT
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: PHX_HOST
         sync: false
