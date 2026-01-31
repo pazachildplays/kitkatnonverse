@@ -2,6 +2,7 @@ services:
   - type: web
     name: kitkat-universe
     env: elixir
+    # rootDir: . # Uncomment and set if mix.exs is in a subdirectory
     buildCommand: mix deps.get --only prod && mix compile && mix assets.deploy
     startCommand: mix phx.server
     envVars:
