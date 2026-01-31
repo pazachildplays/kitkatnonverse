@@ -4,7 +4,10 @@ Welcome to the KitKat Universe! This project is a viewer and admin panel for Kit
 
 ## Deployment
 
-This project is configured for deployment on **Render**.
+This project is configured for deployment on **Render**. If configuring manually, use:
+
+- **Build Command:** `mix deps.get --only prod && mix compile && mix assets.deploy`
+- **Start Command:** `mix phx.server`
 
 ### Prerequisites
 

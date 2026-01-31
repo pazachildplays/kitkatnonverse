@@ -8,4 +8,3 @@ services:
       - key: SECRET_KEY_BASE
         generateValue: true
       - key: PHX_HOST
-        sync: false
