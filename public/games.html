@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitKat Universe - Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="games.css">
+</head>
+<body id="games-page">
+    <div id="bubble-container" class="bubble-container"></div>
+    
+    <!-- Navigation -->
+    <nav class="game-nav">
+        <div class="nav-content">
+            <a href="index.html" class="nav-link">← Back to Home</a>
+            <h2>KitKat Games</h2>
+        </div>
+    </nav>
+
+    <div class="games-container">
+        <div class="game-selector">
+            <button class="game-btn active" data-game="uno" onclick="selectGame('uno')">
+                🃏 Uno
+            </button>
+            <button class="game-btn" data-game="chess" onclick="selectGame('chess')">
+                ♟️ Chess
+            </button>
+        </div>
+
+        <!-- Uno Game -->
+        <div id="uno-game" class="game-content active">
+            <div class="game-main">
+                <div class="game-board">
+                    <div class="uno-play-area">
+                        <h3>Bot's Hand: <span id="botHandCount">7</span></h3>
+                        <div class="bot-cards-display">
+                            <div class="card-back" id="botCard1"></div>
+                            <div class="card-back" id="botCard2"></div>
+                            <div class="card-back" id="botCard3"></div>
+                        </div>
+                        <div id="unoDiscardPile" class="discard-pile">
+                            <div class="current-card" id="unoCurrentCard">Start</div>
+                        </div>
+                        <div class="player-cards">
+                            <h3>Your Hand:</h3>
+                            <div id="unoPlayerHand" class="player-hand"></div>
+                        </div>
+                        <div class="uno-controls">
+                            <button onclick="unoDrawCard()" class="draw-btn">Draw Card 🎴</button>
+                            <button onclick="unoPass()" class="pass-btn">Pass Turn</button>
+                            <button onclick="resetUnoGame()" class="reset-btn">New Game</button>
+                        </div>
+                        <p id="unoStatus">Your turn - Play a card or draw</p>
+                    </div>
+                </div>
+                <div class="leaderboard">
+                    <h3>🏆 Leaderboard</h3>
+                    <div id="unoLeaderboard" class="lb-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chess Game -->
+        <div id="chess-game" class="game-content">
+            <div class="game-main">
+                <div class="game-board">
+                    <div class="chess-play-area">
+                        <h3>Chess vs Bot</h3>
+                        <div id="chessBoard" class="chess-board"></div>
+                        <div class="chess-controls">
+                            <button onclick="resetChessGame()" class="reset-btn">New Game</button>
+                            <button onclick="undoChessMove()" class="undo-btn">Undo Move</button>
+                        </div>
+                        <p id="chessStatus">White to move</p>
+                        <p id="chessNotation"></p>
+                    </div>
+                </div>
+                <div class="leaderboard">
+                    <h3>🏆 Leaderboard</h3>
+                    <div id="chessLeaderboard" class="lb-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="viewer.js"></script>
+    <script src="games.js"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitKat Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); margin: 0; padding: 20px; color: #333; min-height: 100vh; }
+        .admin-container { max-width: 800px; margin: 0 auto; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); padding: 40px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.5); animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { text-align: center; font-size: 2.5rem; margin-bottom: 30px; background: linear-gradient(to right, #a855f7, #ff6b6b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -1px; }
+        h3 { color: #4b5563; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 40px; font-size: 1.4rem; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="file"] { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 15px; font-size: 16px; box-sizing: border-box; transition: all 0.3s ease; background: #fcfcfc; }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus { border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1); outline: none; background: white; }
+        .color-row { display: flex; gap: 20px; }
+        .color-group { flex: 1; }
+        .color-input-wrapper { display: flex; align-items: center; gap: 10px; background: white; padding: 10px; border-radius: 15px; border: 1px solid #eee; }
+        input[type="color"] { width: 40px; height: 40px; border: none; cursor: pointer; background: none; border-radius: 8px; }
+        
+        /* Preview Box */
+        .preview-box {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
+            transition: background 0.3s ease;
+        }
+        .preview-title { font-family: sans-serif; font-size: 2.5rem; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2); margin: 0; }
+        .preview-star { font-size: 1.5rem; margin-top: 10px; }
+
+        /* Links Section */
+        .link-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; transition: transform 0.2s; }
+        .link-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .link-icon-preview { width: 40px; height: 40px; object-fit: contain; background: #ddd; border-radius: 8px; }
+        .btn-delete { background: #ff4757; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-left: auto; }
+        
+        /* Save Button */
+        .save-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; border: none; border-radius: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 30px; box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3); }
+        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4); }
+        .view-btn { display: block; width: 100%; padding: 18px; background: #2d3436; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-top: 15px; box-sizing: border-box; transition: all 0.3s; }
+        .view-btn:hover { transform: translateY(-2px); background: #000; }
+        .sync-btn { display: block; width: 100%; padding: 18px; background: #0984e3; color: white; text-align: center; text-decoration: none; border: none; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-top: 15px; box-sizing: border-box; transition: all 0.3s; cursor: pointer; }
+        .sync-btn:hover { transform: translateY(-2px); background: #74b9ff; box-shadow: 0 10px 20px rgba(9, 132, 227, 0.3); }
+
+        /* Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 20, 0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal.hidden { display: none; }
+        .modal-content { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 40px; 
+            border-radius: 24px; 
+            width: 90%; 
+            max-width: 400px; 
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.5);
+            animation: float-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes float-in { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        .login-header {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 10px 0;
+        }
+        
+        .fancy-input {
+            width: 100%;
+            padding: 15px 20px;
+            margin: 25px 0;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+        .fancy-input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+            outline: none;
+            background: white;
+        }
+
+        /* Bubbles */
+        .bubble-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(168, 85, 247, 0.4));
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+            animation: pop-fade 1s ease-out forwards;
+        }
+        @keyframes pop-fade {
+            0% { transform: scale(0); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body id="admin-page">
+    <div id="bubble-container" class="bubble-container"></div>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="login-header">Admin Login</h2>
+            <p style="color: #666; margin-bottom: 5px;">Welcome back to KitKat Universe</p>
+            <input type="password" id="passwordInput" class="fancy-input" placeholder="Enter Password...">
+            <button onclick="adminLogin()" class="save-btn">Unlock Dashboard 🔓</button>
+            <p id="loginError" style="color: #ff4757; margin-top: 15px; font-weight: 500;"></p>
+            <a href="/" class="view-btn" style="background: #f1f2f6; color: #666; margin-top: 15px; border: 1px solid #e1e1e1;">Back to Home 🏠</a>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="admin-container hidden">
+        <h1>KitKat Universe Admin 🍫</h1>
+        
+        <!-- Theme Settings -->
+        <div class="form-group">
+            <label>Site Title</label>
+            <input type="text" id="siteTitle" value="KitKat Universe" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+            <label>Header Image (Optional - Replaces Title Text)</label>
+            <input type="file" id="headerImageInput" accept="image/*">
+            <div id="currentHeaderImageStatus" style="margin-top: 5px; font-size: 0.9em; color: #666;"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Commissions Status</label>
+            <input type="text" id="commissionsStatus" placeholder="e.g. Open, Closed, Waitlist..." value="Open">
+        </div>
+
+        <div class="color-row">
+            <div class="color-group form-group">
+                <label>Gradient Start</label>
+                <div class="color-input-wrapper">
+                    <input type="color" id="gradStartPicker" value="#a855f7" oninput="syncColor('start', true)">
+                    <input type="text" id="gradStartText" value="#a855f7" oninput="syncColor('start', false)">
+                </div>
+            </div>
+            <div class="color-group form-group">
+                <label>Gradient End</label>
+                <div class="color-input-wrapper">
+                    <input type="color" id="gradEndPicker" value="#6366f1" oninput="syncColor('end', true)">
+                    <input type="text" id="gradEndText" value="#6366f1" oninput="syncColor('end', false)">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Footer Text (Emoji/Signature)</label>
+            <input type="text" id="footerText" value="✨" oninput="updatePreview()">
+        </div>
+
+        <!-- Preview -->
+        <label>Live Preview</label>
+        <div id="previewBox" class="preview-box">
+            <h2 id="previewTitle" class="preview-title">KitKat Universe</h2>
+            <div id="previewFooter" class="preview-star">✨</div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+
+        <!-- Contact & Number -->
+        <h3>Contact & Info Buttons</h3>
+        <div class="form-group">
+            <label>Contact Email (for "Contact Me" button)</label>
+            <input type="email" id="contactEmail" placeholder="kitkatuniverse@gmail.com">
+        </div>
+        <div class="form-group">
+            <label>Phone Number (for "Number" button)</label>
+            <input type="tel" id="phoneNumber" placeholder="+1234567890">
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+
+        <!-- Links Section -->
+        <h3>Social Links (Icons)</h3>
+        <div class="form-group" style="background: white; padding: 25px; border-radius: 20px; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <label>Add New Link</label>
+            <input type="text" id="newLinkName" placeholder="Name (e.g. Twitter)" style="margin-bottom: 10px;">
+            <input type="text" id="newLinkUrl" placeholder="URL (e.g. https://twitter.com/...)" style="margin-bottom: 10px;">
+            <label>Upload Icon</label>
+            <input type="file" id="newLinkIcon" accept="image/*" style="margin-bottom: 10px;">
+            <button onclick="addNewLink()" style="background: #333; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">+ Add Link</button>
+        </div>
+
+        <div id="linksList">
+            <!-- Links will appear here -->
+        </div>
+
+        <button onclick="saveSettings()" class="save-btn">Save Settings</button>
+        <a href="/" target="_blank" class="view-btn">Open Live Site 🚀</a>
+        <button onclick="forceSync()" class="sync-btn">Force Sync to GitHub ☁️</button>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "kitkat-universe",
+  "version": "1.0.0",
+  "description": "KitKat Universe Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase-admin": "^11.11.0"
+  }
+}

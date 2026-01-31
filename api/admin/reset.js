@@ -1,0 +1,82 @@
+const admin = require('firebase-admin');
+
+const DEFAULT_CONFIG = {
+  title: 'Welcome to KitKat Universe',
+  bgGradient: 'linear-gradient(135deg, #7c3aed 0%, #d946ef 100%)',
+  primaryColor: '#7c3aed',
+  secondaryColor: '#d946ef',
+  footerColor: '#1a1a1a',
+  textColor: '#ffffff',
+  commissionsStatus: 'Open',
+  links: [],
+  contacts: []
+};
+
+// --- Firebase Admin SDK setup ---
+let db, configRef;
+if (!admin.apps.length) {
+  try {
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      admin.initializeApp({
+        credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
+      });
+    }
+  } catch (e) {
+    console.error('Firebase admin initialization error', e.stack);
+  }
+}
+if (admin.apps.length) {
+  db = admin.firestore();
+  configRef = db.collection('settings').doc('main');
+}
+// --- End of Firebase setup ---
+
+async function saveConfig(config) {
+  try {
+    if (!configRef) throw new Error('Database not initialized');
+    // Overwrite the document completely with the default config
+    await configRef.set(config);
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving config to Firebase:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
+
+  try {
+    const body = event.body ? JSON.parse(event.body) : {};
+    const { password } = body;
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return { statusCode: 401, headers, body: JSON.stringify({ success: false, message: 'Invalid password' }) };
+    }
+
+    // Reset config to defaults
+    const result = await saveConfig(DEFAULT_CONFIG);
+    if (result.success) {
+      console.log('Config reset to defaults successfully');
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Settings reset to defaults.', config: DEFAULT_CONFIG }) };
+    } else {
+      return { statusCode: 500, headers, body: JSON.stringify({ success: false, error: result.error || 'Failed to reset config' }) };
+    }
+  } catch (error) {
+    console.error('Error resetting config:', error);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error' }) };
+  }
+};

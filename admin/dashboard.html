@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitKat Universe - Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body id="admin-page">
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content login-form">
+            <h2>Admin Login</h2>
+            <p>Enter password to access admin panel</p>
+            <input type="password" id="passwordInput" placeholder="Password" onkeypress="handleLoginKeyPress(event)">
+            <button type="button" onclick="adminLogin()">Login</button>
+            <p id="loginError" class="error"></p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="admin-dashboard hidden">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>KitKat Universe</h1>
+                <p>Admin Control Panel</p>
+            </div>
+            <nav class="menu">
+                <button class="menu-item active" onclick="switchTab('dashboard')">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="menu-item" onclick="switchTab('links')">
+                    <span class="icon">🔗</span> Links
+                </button>
+                <button class="menu-item" onclick="switchTab('contacts')">
+                    <span class="icon">📞</span> Contacts
+                </button>
+                <button class="menu-item" onclick="switchTab('settings')">
+                    <span class="icon">⚙️</span> Settings
+                </button>
+            </nav>
+            <div class="user-section">
+                <div class="user-info">
+                    <p>tobinap</p>
+                </div>
+                <button class="sign-out" onclick="adminLogout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2 id="pageTitle">Dashboard</h2>
+                <button class="preview-btn" onclick="openPreview()">👁️ Preview Viewer Site</button>
+            </div>
+
+            <div class="info-banner">
+                <span class="info-icon">ℹ️</span>
+                <p>Your viewer site is live. Any changes you make here will instantly appear for all visitors!</p>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <h3>Quick Overview</h3>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h4>Commissions Status</h4>
+                        <p id="commissionDisplay">Open</p>
+                    </div>
+                    <div class="card">
+                        <h4>Total Links</h4>
+                        <p id="linkCount">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links Tab -->
+            <div id="links-tab" class="tab-content hidden">
+                <div class="tab-header">
+                    <h3>Manage Links</h3>
+                    <button type="button" class="add-btn" onclick="showAddLinkForm()">+ Add New Link</button>
+                </div>
+
+                <div id="links-list" class="links-list">
+                    <!-- Links will be loaded here -->
+                </div>
+
+                <div id="add-link-form" class="form-section hidden">
+                    <h4>Add New Link</h4>
+                    <input type="text" id="linkName" placeholder="Link Name (e.g., youtube)" class="form-input">
+                    <input type="text" id="linkUrl" placeholder="URL (e.g., https://...)" class="form-input">
+                    <div class="icon-upload-section">
+                        <label>Upload Icon Image:</label>
+                        <input type="file" id="linkIconFile" accept="image/*" class="form-input" required>
+                        <div id="iconPreview" class="icon-preview">No image selected</div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="button" onclick="saveNewLink()" class="btn-primary">Save Link</button>
+                        <button type="button" onclick="cancelAddLink()" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+
+                <div id="edit-link-form" class="form-section hidden">
+                    <h4>Edit Link</h4>
+                    <input type="text" id="editLinkName" placeholder="Link Name (e.g., youtube)" class="form-input">
+                    <input type="text" id="editLinkUrl" placeholder="URL (e.g., https://...)" class="form-input">
+                    <div class="icon-upload-section">
+                        <label>Update Icon Image (leave empty to keep current):</label>
+                        <input type="file" id="editLinkIconFile" accept="image/*" class="form-input">
+                        <div id="editIconPreview" class="icon-preview"></div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="button" onclick="saveEditLink()" class="btn-primary">Save Changes</button>
+                        <button type="button" onclick="cancelEditLink()" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <h3>Settings</h3>
+                
+                <div class="settings-section">
+                    <label>Page Title:</label>
+                    <input type="text" id="settingTitle" class="form-input" placeholder="Welcome to KitKat Universe">
+                    <button type="button" onclick="saveSetting('title', document.getElementById('settingTitle').value)" class="btn-primary">Save</button>
+                </div>
+
+                <div class="settings-section">
+                    <label>Commissions Status:</label>
+                    <select id="commissionStatus" class="form-input">
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                        <option value="On Hold">On Hold</option>
+                    </select>
+                    <button type="button" onclick="saveSetting('commissionsStatus', document.getElementById('commissionStatus').value)" class="btn-primary">Save</button>
+                </div>
+
+                <div class="color-settings-grid">
+                    <div class="settings-section">
+                        <label>Background Gradient:</label>
+                        <input type="text" id="bgGradient" class="form-input" placeholder="linear-gradient(135deg, #5b7cfa 0%, #d946ef 100%)">
+                        <button type="button" onclick="saveSetting('bgGradient', document.getElementById('bgGradient').value)" class="btn-primary">Save</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <label>Primary Color (e.g., #7c3aed):</label>
+                        <div class="color-input-wrapper">
+                            <input type="text" id="primaryColor" class="form-input" placeholder="#7c3aed" maxlength="7">
+                            <input type="color" id="primaryColorPicker" class="color-picker">
+                        </div>
+                        <button type="button" onclick="saveSetting('primaryColor', document.getElementById('primaryColor').value)" class="btn-primary">Save</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <label>Secondary Color (e.g., #d946ef):</label>
+                        <div class="color-input-wrapper">
+                            <input type="text" id="secondaryColor" class="form-input" placeholder="#d946ef" maxlength="7">
+                            <input type="color" id="secondaryColorPicker" class="color-picker">
+                        </div>
+                        <button type="button" onclick="saveSetting('secondaryColor', document.getElementById('secondaryColor').value)" class="btn-primary">Save</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <label>Footer Color (e.g., #1a1a1a):</label>
+                        <div class="color-input-wrapper">
+                            <input type="text" id="footerColor" class="form-input" placeholder="#1a1a1a" maxlength="7">
+                            <input type="color" id="footerColorPicker" class="color-picker">
+                        </div>
+                        <button type="button" onclick="saveSetting('footerColor', document.getElementById('footerColor').value)" class="btn-primary">Save</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <label>Text Color (e.g., #ffffff):</label>
+                        <div class="color-input-wrapper">
+                            <input type="text" id="textColor" class="form-input" placeholder="#ffffff" maxlength="7">
+                            <input type="color" id="textColorPicker" class="color-picker">
+                        </div>
+                        <button type="button" onclick="saveSetting('textColor', document.getElementById('textColor').value)" class="btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts Tab -->
+            <div id="contacts-tab" class="tab-content hidden">
+                <div class="tab-header">
+                    <h3>Contact Information</h3>
+                    <button type="button" class="add-btn" onclick="showAddContactForm()">+ Add Contact</button>
+                </div>
+
+                <div id="contacts-list" class="contacts-list">
+                    <!-- Contacts will be loaded here -->
+                </div>
+
+                <div id="add-contact-form" class="form-section hidden">
+                    <h4>Add Contact</h4>
+                    <input type="text" id="contactLabel" placeholder="Label (e.g., Email, Phone)" class="form-input">
+                    <input type="text" id="contactValue" placeholder="Value (e.g., contact@example.com)" class="form-input">
+                    <input type="text" id="contactIcon" placeholder="Icon (emoji or text)" class="form-input" value="📧">
+                    <div class="form-buttons">
+                        <button type="button" onclick="saveNewContact()" class="btn-primary">Save Contact</button>
+                        <button type="button" onclick="cancelAddContact()" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+
+                <div id="edit-contact-form" class="form-section hidden">
+                    <h4>Edit Contact</h4>
+                    <input type="text" id="editContactLabel" placeholder="Label (e.g., Email, Phone)" class="form-input">
+                    <input type="text" id="editContactValue" placeholder="Value (e.g., contact@example.com)" class="form-input">
+                    <input type="text" id="editContactIcon" placeholder="Icon (emoji or text)" class="form-input" value="📧">
+                    <div class="form-buttons">
+                        <button type="button" onclick="saveEditContact()" class="btn-primary">Save Changes</button>
+                        <button type="button" onclick="cancelEditContact()" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
